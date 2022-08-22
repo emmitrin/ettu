@@ -1,4 +1,4 @@
-module ettu
+module github.com/emmitrin/ettu
 
 go 1.18
 

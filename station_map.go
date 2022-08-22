@@ -40,12 +40,12 @@ func (s *Selection) Search(q string) (*Selection, bool) {
 	return sel, foundOne
 }
 
-func containsWords(haystack, needle string) bool {
-	haystack, needle = strings.ToLower(haystack), strings.ToLower(needle)
-	words := strings.Split(needle, " ")
+func containsWords(s, q string) bool {
+	s, q = strings.ToLower(s), strings.ToLower(q)
+	words := strings.Split(q, " ")
 
 	for _, w := range words {
-		if !strings.Contains(haystack, w) {
+		if !strings.Contains(s, w) {
 			return false
 		}
 	}
