@@ -14,6 +14,10 @@ type Selection struct {
 // The returned Selection is always non-nil, even if there are no search results.
 // The second return value is false in case no stations were found.
 func (s *Selection) Search(q string) (*Selection, bool) {
+	if s == nil {
+		return &Selection{}, false
+	}
+
 	if len(q) == 0 {
 		return s, true
 	}
