@@ -6,8 +6,14 @@ import (
 	"strings"
 )
 
-func (station *BaseStation) FetchTimetable() ([]CarInfo, error) {
-	resp, err := http.Get(basePath + station.Path)
+func FetchTimetableByID(stationID string) ([]CarInfo, error) {
+	const stationPathPrefix = "/station/"
+
+	if !strings.HasPrefix(stationID, stationPathPrefix) {
+		stationID = stationPathPrefix + stationID
+	}
+
+	resp, err := http.Get(basePath + stationID)
 	if err != nil {
 		return nil, err
 	}
@@ -57,4 +63,8 @@ func (station *BaseStation) FetchTimetable() ([]CarInfo, error) {
 	})
 
 	return result, nil
+}
+
+func (station *BaseStation) FetchTimetable() ([]CarInfo, error) {
+	return FetchTimetableByID(station.Path)
 }
