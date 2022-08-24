@@ -6,9 +6,9 @@ import (
 	"strings"
 )
 
-func FetchTimetableByID(stationID string) ([]CarInfo, error) {
-	const stationPathPrefix = "/station/"
+const stationPathPrefix = "/station/"
 
+func FetchTimetableByID(stationID string) ([]CarInfo, error) {
 	if !strings.HasPrefix(stationID, stationPathPrefix) {
 		stationID = stationPathPrefix + stationID
 	}
