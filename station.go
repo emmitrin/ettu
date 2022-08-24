@@ -20,8 +20,8 @@ func (s *Selection) StationByID(id string) (BaseStation, bool) {
 		return BaseStation{}, false
 	}
 
-	if !strings.HasPrefix(id, stationPathPrefix) {
-		id = stationPathPrefix + id
+	if !strings.HasPrefix(id, StationPathPrefix) {
+		id = StationPathPrefix + id
 	}
 
 	for _, tram := range s.Tram {

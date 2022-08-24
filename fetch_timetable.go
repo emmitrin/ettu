@@ -6,11 +6,11 @@ import (
 	"strings"
 )
 
-const stationPathPrefix = "/station/"
+const StationPathPrefix = "/station/"
 
 func FetchTimetableByID(stationID string) ([]CarInfo, error) {
-	if !strings.HasPrefix(stationID, stationPathPrefix) {
-		stationID = stationPathPrefix + stationID
+	if !strings.HasPrefix(stationID, StationPathPrefix) {
+		stationID = StationPathPrefix + stationID
 	}
 
 	resp, err := http.Get(basePath + stationID)
