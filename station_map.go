@@ -37,7 +37,7 @@ func (s *Selection) Search(q string) (*Selection, bool) {
 	for _, trolley := range s.Trolley {
 		if containsWords(trolley.Title, q) {
 			foundOne = true
-			sel.Tram = append(sel.Tram, trolley)
+			sel.Trolley = append(sel.Trolley, trolley)
 		}
 	}
 
