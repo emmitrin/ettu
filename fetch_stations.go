@@ -54,7 +54,7 @@ func fetchStationForLetter(path string) (*Selection, error) {
 					break
 				}
 
-				station := TramStation{Title: getText(node)}
+				station := TramStation{Type: TypeTram, Title: getText(node)}
 
 				for _, attr := range node.Attr {
 					if attr.Key == "href" {
@@ -80,7 +80,7 @@ func fetchStationForLetter(path string) (*Selection, error) {
 					break
 				}
 
-				station := TrolleyStation{Title: getText(node)}
+				station := TrolleyStation{Type: TypeTrolley, Title: getText(node)}
 
 				for _, attr := range node.Attr {
 					if attr.Key == "href" {

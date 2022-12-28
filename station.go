@@ -7,7 +7,13 @@ import "strings"
 type BaseStation struct {
 	Path  string
 	Title string
+	Type  int
 }
+
+const (
+	TypeTram = iota
+	TypeTrolley
+)
 
 type TramStation = BaseStation
 type TrolleyStation = BaseStation
