@@ -1,14 +1,21 @@
 package ettu
 
 import (
+	"errors"
 	"github.com/PuerkitoBio/goquery"
 	"net/http"
+	"strconv"
 	"strings"
+)
+
+var (
+	ErrBadDistance = errors.New("ettu: bad vehicle distance label")
+	ErrBadETA      = errors.New("ettu: bad eta label")
 )
 
 const StationPathPrefix = "/station/"
 
-func FetchTimetableByID(stationID string) ([]CarInfo, error) {
+func FetchTimetableByID(stationID string) ([]VehicleInfo, error) {
 	if !strings.HasPrefix(stationID, StationPathPrefix) {
 		stationID = StationPathPrefix + stationID
 	}
@@ -25,46 +32,80 @@ func FetchTimetableByID(stationID string) ([]CarInfo, error) {
 		return nil, err
 	}
 
-	var result []CarInfo
+	var result []VehicleInfo
 
-	current := CarInfo{}
+	current := VehicleInfo{}
+
+	var traverseError error
 
 	divs := doc.Find("div")
-	divs.Each(func(i int, selection *goquery.Selection) {
+	divs.EachWithBreak(func(i int, selection *goquery.Selection) bool {
 		style, hasStyle := selection.Attr("style")
 		if !hasStyle {
-			return
+			return true
 		}
 
 		if len(selection.Nodes) == 0 {
-			return
+			return true
 		}
 
 		switch {
 		case strings.Contains(style, "width: 3em;"):
 			// number (inside b-tag)
 
-			current.Number = getText(selection.Nodes[0].FirstChild)
+			current.Route = getText(selection.Nodes[0].FirstChild)
 
 		case strings.Contains(style, "width: 4em;"):
 			// ETA
 
-			current.ETA = getText(selection.Nodes[0])
+			eta, err := parseETA(getText(selection.Nodes[0]))
+
+			if err != nil {
+				traverseError = err
+				return false
+			}
+
+			current.ETA = eta
 
 		case strings.Contains(style, "width: 5em;"):
 			// distance
 
-			current.Distance = getText(selection.Nodes[0])
+			dist, err := parseDistance(getText(selection.Nodes[0]))
+
+			if err != nil {
+				traverseError = err
+				return false
+			}
+
+			current.Distance = dist
 
 			result = append(result, current)
 
-			current = CarInfo{}
+			current = VehicleInfo{}
 		}
+
+		return true
 	})
 
-	return result, nil
+	return result, traverseError
 }
 
-func (station *BaseStation) FetchTimetable() ([]CarInfo, error) {
+func (station *BaseStation) FetchTimetable() ([]VehicleInfo, error) {
 	return FetchTimetableByID(station.Path)
+}
+
+func parseDistance(distance string) (int, error) {
+	if !strings.HasSuffix(distance, " м") {
+		return 0, ErrBadDistance
+	}
+
+	return strconv.Atoi(strings.TrimSuffix(distance, " м"))
+}
+
+func parseETA(distance string) (int, error) {
+	if !strings.HasSuffix(distance, " мин") {
+		return 0, ErrBadETA
+	}
+
+	return strconv.Atoi(strings.TrimSuffix(distance, " мин"))
 }
